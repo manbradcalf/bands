@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ band_name }}{% endblock %} — Bands</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="topbar">
+    <h1><a href="/">{{ band_name }}</a></h1>
+    <div class="breadcrumb">{% block breadcrumb %}{% endblock %}</div>
+    <div class="topbar-nav">
+      <a href="/">Floor plan</a>
+      <a href="/pulse">Pulse</a>
+    </div>
+  </div>
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

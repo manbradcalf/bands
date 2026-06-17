@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ emp.name }} — Work{% endblock %}
+{% block breadcrumb %}<a href="/">Floor plan</a> <span>/</span> <a href="/suite/{{ emp.slug }}">{{ emp.name }}</a> <span>/</span> Work{% endblock %}
+
+{% block content %}
+{% include "_suite_tabs.html" %}
+{% if items %}
+{% for item in items %}
+<div class="detail-content">
+  <div class="item-title" style="margin-bottom:0.75rem;">{{ item.title }} <span class="item-meta">— {{ item.filename }}</span></div>
+  {{ item.html|safe }}
+</div>
+{% endfor %}
+{% else %}
+<p class="empty-state">No work artifacts yet.</p>
+{% endif %}
+{% endblock %}

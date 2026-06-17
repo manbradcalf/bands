@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ emp.name }}{% endblock %}
+{% block breadcrumb %}<a href="/">Floor plan</a> <span>/</span> {{ emp.name }}{% endblock %}
+
+{% block content %}
+{% include "_suite_tabs.html" %}
+{% if content_html %}
+<div class="detail-content">{{ content_html|safe }}</div>
+{% else %}
+<p class="empty-state">No CLAUDE.md in this suite yet.</p>
+{% endif %}
+{% endblock %}

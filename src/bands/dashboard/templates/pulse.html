@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Pulse{% endblock %}
+{% block breadcrumb %}<a href="/">Floor plan</a> <span>/</span> Pulse{% endblock %}
+
+{% block content %}
+<h2 class="page-title">Pulse</h2>
+
+<div class="section-label">Activity feed</div>
+{% if entries %}
+{% for e in entries %}
+<div class="detail-content">
+  <div class="item-title">{{ e.who }} <span class="item-meta">— {{ e.when }}</span></div>
+  {{ e.body_html|safe }}
+</div>
+{% endfor %}
+{% else %}
+<p class="empty-state">No activity recorded in commons/activity.md.</p>
+{% endif %}
+
+<div class="section-label" style="margin-top:2rem;">Mail log</div>
+{% if mail_log %}
+<ul class="item-list">
+  {% for m in mail_log %}
+  <li><div class="item-body">
+    <div class="item-title">{{ m.subject }}{% if m.priority %} <span class="badge badge-bugfix">{{ m.priority }}</span>{% endif %}</div>
+    <div class="item-meta">{{ m.from }} → {{ m.to }} · {{ m.date }}</div>
+  </div></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">Mail log is empty.</p>
+{% endif %}
+{% endblock %}

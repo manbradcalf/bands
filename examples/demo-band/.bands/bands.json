@@ -1,0 +1,14 @@
+{
+  "name": "Acme",
+  "gh_owner": "acme-co",
+  "gh_repo": "acme",
+  "gh_project": 1,
+  "employees": [
+    { "name": "Nadia", "role": "CTO", "slug": "nadia-cto", "mode": "advisory", "label": "cto" },
+    { "name": "Marcus", "role": "CMO", "slug": "marcus-cmo", "mode": "advisory", "label": "cmo" },
+    { "name": "Priya", "role": "SDR", "slug": "priya-sdr", "mode": "operational", "label": "sdr" }
+  ],
+  "sprints": [
+    { "name": "launch-week", "goal": "Ship the public beta and land the first 10 signups.", "heartbeats": 10 }
+  ]
+}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="suites-section">
+  <div class="section-label">Suites</div>
+  {% if employees %}
+  <div class="floor-plan">
+    {% for emp in employees %}
+    <a href="/suite/{{ emp.slug }}" class="card">
+      <div class="card-role" style="background: {{ emp.color_bg }}; color: {{ emp.color_fg }};">{{ emp.role }}</div>
+      <div class="card-name">{{ emp.name }}</div>
+      <div class="card-meta">{{ emp.mode }}</div>
+      <div class="card-stats">
+        <span>{{ emp.unread_count }} unread</span>
+        {% if emp.must_read_count %}<span class="badge badge-bugfix">{{ emp.must_read_count }} must-read</span>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty-state">No employees defined in bands.json.</p>
+  {% endif %}
+</div>
+
+<div class="rooms-section">
+  <div class="section-label">Rooms</div>
+  <div class="floor-plan">
+    {% for room in rooms %}
+    <a href="/room/{{ room.slug }}" class="card">
+      <div class="card-name">{{ room.name }}</div>
+      <div class="card-meta">
+        {% if room.has_minutes %}{{ room.minutes|length }} minute{{ 's' if room.minutes|length != 1 }}{% else %}Workspace{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

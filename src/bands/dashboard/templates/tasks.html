@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ emp.name }} — Tasks{% endblock %}
+{% block breadcrumb %}<a href="/">Floor plan</a> <span>/</span> <a href="/suite/{{ emp.slug }}">{{ emp.name }}</a> <span>/</span> Tasks{% endblock %}
+
+{% block content %}
+{% include "_suite_tabs.html" %}
+{% if result.available %}
+  {% if result.items %}
+  <ul class="item-list">
+    {% for item in result.items %}
+    <li><div class="item-body">
+      <div class="item-title"><a href="{{ item.url }}">#{{ item.number }} {{ item.title }}</a></div>
+      <div class="item-meta">{% for l in item.labels %}<span class="tag">{{ l }}</span> {% endfor %}</div>
+    </div></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="empty-state">No open issues labelled <code>{{ emp.label }}</code>.</p>
+  {% endif %}
+{% else %}
+<div class="detail-content notice">
+  <div class="item-title">Tasks not configured</div>
+  <p>{{ result.error }}</p>
+</div>
+{% endif %}
+{% endblock %}

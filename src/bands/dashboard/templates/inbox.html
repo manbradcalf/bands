@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ emp.name }} — Inbox{% endblock %}
+{% block breadcrumb %}<a href="/">Floor plan</a> <span>/</span> <a href="/suite/{{ emp.slug }}">{{ emp.name }}</a> <span>/</span> Inbox{% endblock %}
+
+{% block content %}
+{% include "_suite_tabs.html" %}
+
+<div class="section-label">Unread</div>
+{% if messages %}
+{% for m in messages %}
+<div class="detail-content message">
+  <div class="message-head">
+    <span class="item-title">{{ m.subject }}</span>
+    {% if m.priority %}<span class="badge badge-bugfix">{{ m.priority }}</span>{% endif %}
+  </div>
+  <div class="item-meta">from {{ m.from }} · {{ m.date }}</div>
+  <div class="message-body">{{ m.body_html|safe }}</div>
+</div>
+{% endfor %}
+{% else %}
+<p class="empty-state">Inbox is empty.</p>
+{% endif %}
+
+{% if read_messages %}
+<div class="section-label" style="margin-top:2rem;">Read</div>
+<ul class="item-list">
+  {% for m in read_messages %}
+  <li><div class="item-body"><div class="item-title">{{ m.subject }}</div><div class="item-meta">from {{ m.from }} · {{ m.date }}</div></div></li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

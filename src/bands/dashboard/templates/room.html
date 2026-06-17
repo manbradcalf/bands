@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ room.name }}{% endblock %}
+{% block breadcrumb %}<a href="/">Floor plan</a> <span>/</span> {{ room.name }}{% endblock %}
+
+{% block content %}
+<h2 class="page-title">{{ room.name }}</h2>
+
+{% if room.content_html %}
+<div class="detail-content">{{ room.content_html|safe }}</div>
+{% endif %}
+
+{% if room.has_minutes %}
+<div class="section-label" style="margin-top:2rem;">Minutes</div>
+{% if room.minutes %}
+<ul class="minutes-list">
+  {% for m in room.minutes %}
+  <li><a href="/room/{{ room.slug }}/minutes/{{ m.slug }}">{{ m.name }}</a></li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="empty-state">No minutes recorded.</p>
+{% endif %}
+{% endif %}
+
+{% if room.files %}
+<div class="section-label" style="margin-top:2rem;">Files</div>
+<ul class="file-list">
+  {% for f in room.files %}<li>{{ f.filename }}</li>{% endfor %}
+</ul>
+{% endif %}
+
+{% if not room.content_html and not room.has_minutes and not room.files %}
+<p class="empty-state">This room is empty.</p>
+{% endif %}
+{% endblock %}

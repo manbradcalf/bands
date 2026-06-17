@@ -1,0 +1,11 @@
+<div class="suite-header">
+  <span class="card-role" style="background: {{ emp.color_bg }}; color: {{ emp.color_fg }};">{{ emp.role }}</span>
+  <span class="suite-name">{{ emp.name }}</span>
+  <span class="suite-mode">{{ emp.mode }}</span>
+</div>
+<div class="tab-nav">
+  <a href="/suite/{{ emp.slug }}" class="{{ 'active' if tab == 'overview' }}">Overview</a>
+  <a href="/suite/{{ emp.slug }}/inbox" class="{{ 'active' if tab == 'inbox' }}">Inbox{% if emp.unread_count %} ({{ emp.unread_count }}){% endif %}</a>
+  <a href="/suite/{{ emp.slug }}/work" class="{{ 'active' if tab == 'work' }}">Work</a>
+  <a href="/suite/{{ emp.slug }}/tasks" class="{{ 'active' if tab == 'tasks' }}">Tasks</a>
+</div>

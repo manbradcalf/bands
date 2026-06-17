@@ -1,0 +1,26 @@
+[
+  {
+    "to": "nadia-cto",
+    "from": "marcus-cmo",
+    "subject": "Need a staging URL for the launch post",
+    "priority": "must-read",
+    "date": "2026-06-16 10:15",
+    "filename": "2026-06-16-1015-from-marcus-cmo.md"
+  },
+  {
+    "to": "priya-sdr",
+    "from": "ceo",
+    "subject": "Prioritize design-tool teams for the beta list",
+    "priority": "keep-in-mind",
+    "date": "2026-06-16 09:00",
+    "filename": "2026-06-16-0900-from-ceo.md"
+  },
+  {
+    "to": "marcus-cmo",
+    "from": "nadia-cto",
+    "subject": "Staging URL coming Wednesday",
+    "priority": "",
+    "date": "2026-06-16 11:45",
+    "filename": "2026-06-16-1145-from-nadia-cto.md"
+  }
+]
