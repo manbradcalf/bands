@@ -24,10 +24,10 @@ This repo is the reusable skeleton extracted from it.
 Bands is a Python package managed with [uv](https://docs.astral.sh/uv/).
 
 ```bash
-# Install as a tool
-uv tool install bands
+# Install as a tool (from source)
+uv tool install git+https://github.com/manbradcalf/bands
 # ...or run without installing
-uvx bands --help
+uvx --from git+https://github.com/manbradcalf/bands bands --help
 
 # Scaffold a band into the current repo (interactive)
 bands init
