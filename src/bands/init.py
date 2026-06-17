@@ -1,11 +1,32 @@
 """Interactive band initialization."""
 
 import json
+import subprocess
 from pathlib import Path
 
 import click
 
 from bands.scaffold import scaffold_band
+
+
+def create_gh_project(owner: str, title: str) -> int:
+    """Create a new GitHub project and return its number."""
+    result = subprocess.run(
+        [
+            "gh", "project", "create",
+            "--owner", owner,
+            "--title", title,
+            "--format", "json",
+        ],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise click.ClickException(
+            f"Failed to create GitHub project: {result.stderr.strip()}"
+        )
+    data = json.loads(result.stdout)
+    return int(data["number"])
 
 
 def prompt_employees() -> list[dict]:
@@ -82,7 +103,11 @@ def init_band(target_dir: str):
     click.echo("\n--- GitHub Integration ---")
     gh_owner = click.prompt("GH repo owner")
     gh_repo = click.prompt("GH repo name", default=band_name)
-    gh_project = click.prompt("GH project number (for task board)", type=int)
+    if click.confirm("Create a new GitHub project for this band?", default=True):
+        gh_project = create_gh_project(gh_owner, band_name)
+        click.echo(f"  Created GH project #{gh_project}")
+    else:
+        gh_project = click.prompt("GH project number (for task board)", type=int)
 
     # 3. Employees
     employees = prompt_employees()
