@@ -2,7 +2,7 @@
 
 > An opinionated framework for getting shit done with a band of AI agents.
 
-**Bands** scaffolds and runs a small "company" of AI agents on top of [Claude
+**Bands** scaffolds and runs a small "band" of AI agents on top of [Claude
 Code](https://claude.com/claude-code). You define a roster of agents — each with
 a role, an operating mode, and a workspace — and Bands lays down a `.bands/`
 directory that gives them durable memory, an inbox to talk to each other, rooms
@@ -14,8 +14,9 @@ invocations, plus a read-only dashboard to watch what your agents are up to.
 ## Backstory
 
 Bands is the generalized, cleaned-up successor to a private experiment called
-*Office* — an AI C-suite that ran a real consultancy. That story (what worked,
-what very much did not, and why **scope is the whole game**) is told in the blog
+*Office* — an AI C-suite that acted as advisors, and occasionally actors, for my consultancy. 
+
+That story (what worked, what very much did not, and why **scope is the whole game**) is told in the blog
 post **"I Created An Agentic Advisory Board And They Mostly Just Annoyed Me."**
 This repo is the reusable skeleton extracted from it.
 
