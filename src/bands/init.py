@@ -29,6 +29,36 @@ def create_gh_project(owner: str, title: str) -> int:
     return int(data["number"])
 
 
+def ensure_gh_repo(owner: str, repo: str) -> None:
+    """Make sure the task-tracking repo exists; offer to create it if not."""
+    check = subprocess.run(
+        ["gh", "repo", "view", f"{owner}/{repo}"],
+        capture_output=True,
+    )
+    if check.returncode == 0:
+        return
+
+    click.echo(f"  GitHub repo {owner}/{repo} does not exist.")
+    if not click.confirm("  Create it?", default=True):
+        raise click.ClickException(
+            f"Repo {owner}/{repo} is required for issue tracking. "
+            "Create it and re-run `bands init`."
+        )
+    visibility = click.prompt(
+        "  Visibility", type=click.Choice(["private", "public"]), default="private"
+    )
+    result = subprocess.run(
+        ["gh", "repo", "create", f"{owner}/{repo}", f"--{visibility}"],
+        capture_output=True,
+        text=True,
+    )
+    if result.returncode != 0:
+        raise click.ClickException(
+            f"Failed to create GitHub repo: {result.stderr.strip()}"
+        )
+    click.echo(f"  Created {owner}/{repo} ({visibility})")
+
+
 def prompt_employees() -> list[dict]:
     """Prompt for employee definitions."""
     employees = []
@@ -103,6 +133,7 @@ def init_band(target_dir: str):
     click.echo("\n--- GitHub Integration ---")
     gh_owner = click.prompt("GH repo owner")
     gh_repo = click.prompt("GH repo name", default=band_name)
+    ensure_gh_repo(gh_owner, gh_repo)
     if click.confirm("Create a new GitHub project for this band?", default=True):
         gh_project = create_gh_project(gh_owner, band_name)
         click.echo(f"  Created GH project #{gh_project}")
