@@ -5,6 +5,7 @@ from pathlib import Path
 import click
 
 from bands.init import init_band
+from bands.run import run as run_agent
 
 
 @click.group()
@@ -18,6 +19,19 @@ def main():
 def init(target_dir: str):
     """Initialize a new band interactively."""
     init_band(target_dir)
+
+
+@main.command()
+@click.option("--dir", "bands_dir", required=True, type=click.Path(exists=True, file_okay=False),
+              help="Path to the .bands/ workspace directory")
+@click.option("--suite", required=True, help="Employee suite slug")
+@click.option("--tier", default="smart", show_default=True, type=click.Choice(["smart", "fast"]),
+              help="Model tier (mapped per engine in bands.json)")
+@click.option("--allowed-tools", default=None, help="Tool allowlist passed through to the engine")
+@click.argument("prompt")
+def run(bands_dir: str, suite: str, tier: str, allowed_tools: str | None, prompt: str):
+    """Run one agent heartbeat through the configured engine (claude, pi, ...)."""
+    raise SystemExit(run_agent(Path(bands_dir), suite, tier, prompt, allowed_tools))
 
 
 @main.command()

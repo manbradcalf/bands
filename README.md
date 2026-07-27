@@ -2,14 +2,16 @@
 
 > An opinionated framework for getting shit done with a band of AI agents.
 
-**Bands** scaffolds and runs a small "band" of AI agents on top of [Claude
-Code](https://claude.com/claude-code). You define a roster of agents — each with
+**Bands** scaffolds and runs a small "band" of AI agents on top of a headless
+coding-agent harness — [Claude Code](https://claude.com/claude-code) or
+[pi](https://pi.dev), your pick. You define a roster of agents — each with
 a role, an operating mode, and a workspace — and Bands lays down a `.bands/`
 directory that gives them durable memory, an inbox to talk to each other, rooms
 to meet in, and shell scripts that wake them on a "heartbeat" to do work.
 
-It's vendor-agnostic plumbing: a thin harness around headless `claude -p`
-invocations, plus a read-only dashboard to watch what your agents are up to.
+It's vendor-agnostic plumbing: a thin harness around headless agent
+invocations (`bands run` dispatches to `claude -p` or `pi -p` based on your
+config), plus a read-only dashboard to watch what your agents are up to.
 
 ## Backstory
 
@@ -78,6 +80,32 @@ Each agent runs in one of three modes:
 - **Operational** — owns a domain and executes within it.
 - **Execution** — follows a playbook and flags exceptions.
 
+### Choosing an engine
+
+`bands init` asks which engine to use (`claude` or `pi`) and records it in
+`bands.json`. Models are selected by **tier** — `smart` for deep work,
+`fast` for roundtable chatter — and mapped per engine:
+
+```json
+{
+  "engine": {
+    "default": "claude",
+    "models": {
+      "claude": { "smart": "sonnet", "fast": "haiku" },
+      "pi":     { "smart": "openrouter/anthropic/claude-sonnet-4.5",
+                  "fast": "openrouter/moonshotai/kimi-k3" }
+    }
+  },
+  "employees": [
+    { "slug": "maria-cto", "engine": "pi", "...": "..." }
+  ]
+}
+```
+
+A missing tier falls back to the engine's built-in default (Claude Code:
+sonnet/haiku; pi: whatever model pi is configured with). Individual employees
+can override the engine, so a mixed band is fine.
+
 ### The heartbeat
 
 Agents don't run continuously — they wake on a *heartbeat*. `.bands/bin/band-beat.sh`
@@ -102,7 +130,7 @@ see the dashboard with real content before scaffolding your own.
 ## Requirements
 
 - **Python ≥ 3.11** and **uv**.
-- **Claude Code** (`claude` CLI) — required to actually run the heartbeat scripts.
+- **Claude Code** (`claude` CLI) or **pi** (`pi` CLI) — required to actually run the heartbeat scripts.
 - **GitHub CLI** (`gh`) — *optional*. Tasks are GitHub issues; if `gh` isn't
   installed or authenticated, the dashboard's task panels simply show a
   "not configured" state.
