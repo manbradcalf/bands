@@ -86,9 +86,8 @@ for round in $(seq 1 "$ROUNDS"); do
 
     PROMPT="${PROMPT_TEMPLATE//ROUNDTABLE_PATH/$ROUNDTABLE}"
 
-    cd "$suite_dir" && claude -p "$PROMPT" \
-      --model haiku \
-      --allowedTools "Read Write"
+    bands run --dir "$BAND_DIR" --suite "$suite" --tier fast \
+      --allowed-tools "Read Write" "$PROMPT"
 
     echo "  [$name] done"
   done

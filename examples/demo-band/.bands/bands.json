@@ -1,5 +1,6 @@
 {
   "name": "Acme",
+  "engine": { "default": "claude" },
   "gh_owner": "acme-co",
   "gh_repo": "acme",
   "gh_project": 1,

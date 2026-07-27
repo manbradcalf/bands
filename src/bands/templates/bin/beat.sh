@@ -32,7 +32,7 @@ SESSION_LOG="$LOG_DIR/${SUITE}-$(date '+%Y%m%d-%H%M%S').log"
 
 echo "[$SUITE] waking up — $(date '+%H:%M:%S')"
 
-cd "$SUITE_DIR" && claude -p "$PROMPT" --model sonnet --output-format stream-json --verbose 2>&1 | tee "$SESSION_LOG"
+bands run --dir "$BAND_DIR" --suite "$SUITE" --tier smart "$PROMPT" 2>&1 | tee "$SESSION_LOG"
 
 echo "[$SUITE] done — $(date '+%H:%M:%S')"
 echo "$(date '+%Y-%m-%d %H:%M:%S') $SESSION_LOG" >>"$LOG_DIR/${SUITE}.log"

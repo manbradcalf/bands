@@ -87,11 +87,8 @@ $(cat "$heartbeat")"
   echo ""
   echo "--- [$suite] waking up — $(date '+%H:%M:%S') ---"
 
-  cd "$suite_dir" && claude -p "$PROMPT" \
-    --model sonnet \
-    --allowedTools "$ALLOWED_TOOLS" \
-    --output-format stream-json \
-    --verbose 2>&1 | tee "$session_log"
+  bands run --dir "$BAND_DIR" --suite "$suite" --tier smart \
+    --allowed-tools "$ALLOWED_TOOLS" "$PROMPT" 2>&1 | tee "$session_log"
 
   echo "--- [$suite] done — $(date '+%H:%M:%S') ---"
 done

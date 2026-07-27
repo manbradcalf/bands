@@ -109,15 +109,24 @@ def init_band(target_dir: str):
     else:
         gh_project = click.prompt("GH project number (for task board)", type=int)
 
-    # 3. Employees
+    # 3. Engine (agent harness)
+    from bands.engines import engine_names
+    engine = click.prompt(
+        "\nAgent engine (harness that runs your agents)",
+        default="claude",
+        type=click.Choice(engine_names()),
+    )
+
+    # 4. Employees
     employees = prompt_employees()
 
-    # 4. Sprints
+    # 5. Sprints
     sprints = prompt_sprints()
 
-    # 5. Confirm
+    # 6. Confirm
     click.echo("\n--- Summary ---")
     click.echo(f"Band: {band_name}")
+    click.echo(f"Engine: {engine}")
     click.echo(f"Repo: {gh_owner}/{gh_repo}")
     click.echo(f"Project: #{gh_project}")
     click.echo(f"Employees: {', '.join(e['name'] + ' (' + e['role'] + ')' for e in employees)}")
@@ -131,9 +140,10 @@ def init_band(target_dir: str):
         click.echo("Aborted.")
         return
 
-    # 6. Build it
+    # 7. Build it
     config = {
         "name": band_name,
+        "engine": {"default": engine},
         "gh_owner": gh_owner,
         "gh_repo": gh_repo,
         "gh_project": gh_project,
