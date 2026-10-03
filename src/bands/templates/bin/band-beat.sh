@@ -50,12 +50,26 @@ GUARDRAILS:
 # Sprint mode: inject NORTH_STAR.md if present
 NORTH_STAR="$BAND_DIR/commons/sprint/NORTH_STAR.md"
 SPRINT_CONTEXT=""
+SPRINT_ACTIVE=0
 if [ -f "$NORTH_STAR" ]; then
+  SPRINT_ACTIVE=1
+  SPRINT_NAME=$(grep '^name:'       "$NORTH_STAR" | head -1 | awk '{print $2}')
+  SPRINT_TOTAL=$(grep '^heartbeats:' "$NORTH_STAR" | head -1 | awk '{print $2}')
+  SPRINT_DONE=$(grep '^completed:'  "$NORTH_STAR" | head -1 | awk '{print $2}')
+  SPRINT_DONE=${SPRINT_DONE:-0}
+  SPRINT_CURRENT=$((SPRINT_DONE + 1))
+  SPRINT_REMAINING=$((SPRINT_TOTAL - SPRINT_CURRENT))
+  [ "$SPRINT_REMAINING" -lt 0 ] && SPRINT_REMAINING=0
+
   SPRINT_CONTEXT="
 ## Sprint North Star
 $(cat "$NORTH_STAR")
+
+## Sprint Progress
+This is HEARTBEAT $SPRINT_CURRENT of $SPRINT_TOTAL. $SPRINT_REMAINING heartbeat(s) remain after this one.
+Pace your work accordingly: if few remain, converge and ship concrete results; if many remain, you may invest in groundwork that pays off in later heartbeats.
 "
-  echo "=== SPRINT MODE ACTIVE ==="
+  echo "=== SPRINT MODE ACTIVE — heartbeat $SPRINT_CURRENT/$SPRINT_TOTAL ==="
 fi
 
 # --- Phase 1: Roundtable ---
@@ -95,6 +109,21 @@ $(cat "$heartbeat")"
 
   echo "--- [$suite] done — $(date '+%H:%M:%S') ---"
 done
+
+# --- Advance sprint progress ---
+if [ "$SPRINT_ACTIVE" -eq 1 ]; then
+  if [ "$SPRINT_CURRENT" -ge "$SPRINT_TOTAL" ]; then
+    echo ""
+    echo "=== SPRINT COMPLETE ($SPRINT_TOTAL heartbeats) — archiving ==="
+    archive="$BAND_DIR/commons/sprints-archive/$(date '+%Y%m%d')-${SPRINT_NAME:-sprint}.md"
+    sed -i '' "s/^completed:.*/completed: $SPRINT_CURRENT/" "$NORTH_STAR"
+    mv "$NORTH_STAR" "$archive"
+    echo "archived to $archive"
+  else
+    sed -i '' "s/^completed:.*/completed: $SPRINT_CURRENT/" "$NORTH_STAR"
+    echo "--- sprint progress: $SPRINT_CURRENT/$SPRINT_TOTAL ---"
+  fi
+fi
 
 # --- Auto-commit ---
 echo ""
