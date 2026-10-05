@@ -1,9 +1,26 @@
 """Scaffold a band from config."""
 
+import copy
 import json
 from pathlib import Path
 
 from jinja2 import Environment, PackageLoader
+
+# Default agent harness: Claude Code, Sonnet for deep work, Haiku for roundtables.
+# See templates/bin/adapters/README.md for other harnesses.
+DEFAULT_HARNESS = {"adapter": "claude", "models": {"work": "sonnet", "roundtable": "haiku"}}
+
+# Bin files are copied verbatim, not rendered: bash syntax like ${#arr[@]},
+# {{ and {% collides with Jinja. (path, mode) relative to templates/bin/.
+BIN_FILES = [
+    ("beat.sh", 0o755),
+    ("band-beat.sh", 0o755),
+    ("roundtable.sh", 0o755),
+    ("config.sh", 0o644),            # sourced, not executed
+    ("adapters/claude.sh", 0o644),   # sourced by config.sh
+    ("adapters/pi.sh", 0o644),
+    ("adapters/README.md", 0o644),
+]
 
 
 def get_templates() -> Environment:
@@ -16,6 +33,7 @@ def get_templates() -> Environment:
 def scaffold_band(target: Path, config: dict):
     """Create the full band directory structure inside .bands/ of the target repo."""
     env = get_templates()
+    config = {**config, "harness": config.get("harness") or copy.deepcopy(DEFAULT_HARNESS)}
     bands_dir = target / ".bands"
     bands_dir.mkdir(parents=True, exist_ok=True)
 
@@ -94,13 +112,13 @@ def scaffold_band(target: Path, config: dict):
 
     # Bin scripts
     bin_dir = bands_dir / "bin"
-    bin_dir.mkdir(exist_ok=True)
+    (bin_dir / "adapters").mkdir(parents=True, exist_ok=True)
 
-    for script in ["beat.sh", "band-beat.sh", "roundtable.sh"]:
-        tmpl = env.get_template(f"bin/{script}")
-        path = bin_dir / script
-        path.write_text(tmpl.render(**config))
-        path.chmod(0o755)
+    for name, mode in BIN_FILES:
+        source, _, _ = env.loader.get_source(env, f"bin/{name}")
+        path = bin_dir / name
+        path.write_text(source)
+        path.chmod(mode)
 
     # Mail log
     (commons / "mail-log.json").write_text("[]\n")

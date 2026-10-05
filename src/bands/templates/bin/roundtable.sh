@@ -10,6 +10,7 @@
 set -uo pipefail
 
 BAND_DIR="$(cd "$(dirname "$0")/.." && pwd)"  # .bands/
+source "$BAND_DIR/bin/config.sh"  # harness adapter + agent_run
 
 if [[ "${1:-}" =~ ^[0-9]+$ ]]; then
   ROUNDS="$1"
@@ -86,9 +87,7 @@ for round in $(seq 1 "$ROUNDS"); do
 
     PROMPT="${PROMPT_TEMPLATE//ROUNDTABLE_PATH/$ROUNDTABLE}"
 
-    cd "$suite_dir" && claude -p "$PROMPT" \
-      --model haiku \
-      --allowedTools "Read Write"
+    cd "$suite_dir" && agent_run roundtable "$PROMPT"
 
     echo "  [$name] done"
   done
