@@ -2,14 +2,15 @@
 
 > An opinionated framework for getting shit done with a band of AI agents.
 
-**Bands** scaffolds and runs a small "band" of AI agents on top of [Claude
-Code](https://claude.com/claude-code). You define a roster of agents — each with
-a role, an operating mode, and a workspace — and Bands lays down a `.bands/`
+**Bands** scaffolds and runs a small "band" of AI agents on top of a headless
+agent harness ([Claude Code](https://claude.com/claude-code) by default). You
+define a roster of agents — each with a role, an operating mode, and a workspace — and Bands lays down a `.bands/`
 directory that gives them durable memory, an inbox to talk to each other, rooms
 to meet in, and shell scripts that wake them on a "heartbeat" to do work.
 
-It's vendor-agnostic plumbing: a thin harness around headless `claude -p`
-invocations, plus a read-only dashboard to watch what your agents are up to.
+It's vendor-agnostic plumbing: shell scripts that run headless agent sessions
+through a pluggable harness adapter, plus a read-only dashboard to watch what
+your agents are up to.
 
 ## Backstory
 
@@ -67,7 +68,8 @@ roster of employees, and any initial sprints, then writes a `.bands/` workspace:
 │   └── sprint/NORTH_STAR.md
 ├── boardroom/              # C-suite meeting minutes + inbox
 ├── lobby/  breakroom/      # inbound info / informal exchanges
-└── bin/                    # beat.sh, band-beat.sh, roundtable.sh
+└── bin/                    # beat.sh, band-beat.sh, roundtable.sh,
+                            #   config.sh, adapters/ (claude.sh, pi.sh)
 ```
 
 ### Operating modes
@@ -84,6 +86,28 @@ Agents don't run continuously — they wake on a *heartbeat*. `.bands/bin/band-b
 runs a full cycle (a quick roundtable to sync, then individual deep work, then a
 commit), `beat.sh` wakes a single employee, and `roundtable.sh` runs a fast
 multi-round discussion. Wire these to cron for autonomy, or run them by hand.
+
+### Choosing the harness
+
+The scripts never call an agent CLI directly. They call `agent_run work` (deep
+work) or `agent_run roundtable` (quick chat), and the adapter named in
+`bands.json` turns that into a real command. The default:
+
+```json
+"harness": {
+  "adapter": "claude",
+  "models": { "work": "sonnet", "roundtable": "haiku" }
+}
+```
+
+Bands ships `claude` (Claude Code) and `pi` adapters. To switch, change
+`adapter` and the two model IDs. To override for one run:
+
+```bash
+BANDS_ADAPTER=pi BANDS_WORK_MODEL=<model> BANDS_ROUNDTABLE_MODEL=<model> .bands/bin/band-beat.sh
+```
+
+To add another harness, see `.bands/bin/adapters/README.md`.
 
 ## The dashboard
 
@@ -102,7 +126,8 @@ see the dashboard with real content before scaffolding your own.
 ## Requirements
 
 - **Python ≥ 3.11** and **uv**.
-- **Claude Code** (`claude` CLI) — required to actually run the heartbeat scripts.
+- An **agent harness** to run the heartbeat scripts: **Claude Code** (`claude`
+  CLI) by default, or [pi](https://github.com/earendil-works/pi) (`pi` CLI).
 - **GitHub CLI** (`gh`) — *optional*. Tasks are GitHub issues; if `gh` isn't
   installed or authenticated, the dashboard's task panels simply show a
   "not configured" state.

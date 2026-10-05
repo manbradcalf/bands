@@ -10,5 +10,9 @@
   ],
   "sprints": [
     { "name": "launch-week", "goal": "Ship the public beta and land the first 10 signups.", "heartbeats": 10 }
-  ]
+  ],
+  "harness": {
+    "adapter": "claude",
+    "models": { "work": "sonnet", "roundtable": "haiku" }
+  }
 }

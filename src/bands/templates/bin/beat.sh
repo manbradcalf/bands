@@ -8,6 +8,7 @@
 set -uo pipefail
 
 BAND_DIR="$(cd "$(dirname "$0")/.." && pwd)"  # .bands/
+source "$BAND_DIR/bin/config.sh"  # harness adapter + agent_run
 LOG_DIR="/tmp/bands-heartbeat"
 mkdir -p "$LOG_DIR"
 
@@ -32,7 +33,7 @@ SESSION_LOG="$LOG_DIR/${SUITE}-$(date '+%Y%m%d-%H%M%S').log"
 
 echo "[$SUITE] waking up — $(date '+%H:%M:%S')"
 
-cd "$SUITE_DIR" && claude -p "$PROMPT" --model sonnet --output-format stream-json --verbose 2>&1 | tee "$SESSION_LOG"
+cd "$SUITE_DIR" && agent_run work "$PROMPT" 2>&1 | tee "$SESSION_LOG"
 
 echo "[$SUITE] done — $(date '+%H:%M:%S')"
 echo "$(date '+%Y-%m-%d %H:%M:%S') $SESSION_LOG" >>"$LOG_DIR/${SUITE}.log"

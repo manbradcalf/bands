@@ -9,6 +9,7 @@
 set -uo pipefail
 
 BAND_DIR="$(cd "$(dirname "$0")/.." && pwd)"  # .bands/
+source "$BAND_DIR/bin/config.sh"  # harness adapter + agent_run
 LOG_DIR="/tmp/bands-heartbeat"
 mkdir -p "$LOG_DIR"
 
@@ -26,8 +27,6 @@ if [ $# -gt 0 ]; then
 else
   EMPLOYEES=("${ALL_EMPLOYEES[@]}")
 fi
-
-ALLOWED_TOOLS="Read Write Edit Glob Grep Bash Agent"
 
 GUARDRAILS="YOUR SESSION STARTS NOW.
 
@@ -74,7 +73,7 @@ fi
 
 # --- Phase 1: Roundtable ---
 CHAT_ROUNDS=3
-echo "=== Bands Heartbeat — $(date '+%Y-%m-%d %H:%M:%S') ==="
+echo "=== Bands Heartbeat — $(date '+%Y-%m-%d %H:%M:%S') — harness: $ADAPTER ==="
 echo ""
 echo "--- Phase 1: Roundtable ($CHAT_ROUNDS rounds) ---"
 
@@ -101,11 +100,7 @@ $(cat "$heartbeat")"
   echo ""
   echo "--- [$suite] waking up — $(date '+%H:%M:%S') ---"
 
-  cd "$suite_dir" && claude -p "$PROMPT" \
-    --model sonnet \
-    --allowedTools "$ALLOWED_TOOLS" \
-    --output-format stream-json \
-    --verbose 2>&1 | tee "$session_log"
+  cd "$suite_dir" && agent_run work "$PROMPT" 2>&1 | tee "$session_log"
 
   echo "--- [$suite] done — $(date '+%H:%M:%S') ---"
 done
